@@ -1,0 +1,38 @@
+/* =====================================================================
+ *  WINDOT NT 1.0 - OFFICIAL KERNEL MEMORY ARRANGEMENT Blueprints
+ *  Copyright (c) 2026 Tylersoft Corporation
+ * ===================================================================== */
+
+ENTRY(_start)
+
+SECTIONS
+{
+    /* Load the kernel code boundaries starting at the 1 Megabyte mark */
+    . = 1M;
+
+    /* Combine code sectors, ensuring the multiboot header sits at the top */
+    .text BLOCK(4K) : ALIGN(4K)
+    {
+        *(.multiboot_header)
+        *(.text)
+    }
+
+    /* Read-only system data (such as system greeting messages) */
+    .rodata BLOCK(4K) : ALIGN(4K)
+    {
+        *(.rodata)
+    }
+
+    /* Initialized global data parameters */
+    .data BLOCK(4K) : ALIGN(4K)
+    {
+        *(.data)
+    }
+
+    /* Uninitialized variables and hardware stack allocation blocks */
+    .bss BLOCK(4K) : ALIGN(4K)
+    {
+        *(COMMON)
+        *(.bss)
+    }
+}
